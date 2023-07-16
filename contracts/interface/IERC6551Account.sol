@@ -7,7 +7,7 @@ interface IERC6551Account {
     ///
     /// Token bound accounts MAY perform arbitrary logic to restrict conditions
     /// under which Ether can be received.
-    // receive() external payable;
+    receive() external payable;
 
     /// @dev Executes `call` on address `to`, with value `value` and calldata
     /// `data`.
@@ -55,5 +55,5 @@ interface IERC6551Account {
     /// @dev Returns a nonce value that is updated on every successful transaction
     ///
     /// @return The current account nonce
-    // function nonce() external view returns (uint256);
+    function nonce() external view returns (uint256);
 }

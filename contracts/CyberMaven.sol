@@ -8,14 +8,13 @@ import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "./Bytecode.sol";
-import "./IERC6651Account.sol";
+import "./interface/IERC6551Account.sol";
 
 contract CyberMaven is IERC165, IERC1271, IERC6551Account {
-    receive() external payable {}
 
-    function getBalance() external view returns (uint) {
-        return address(this).balance;
-    }
+    uint256 private _nounce ;
+
+    receive() external payable {}
 
     function executeCall(
         address to,
@@ -32,12 +31,17 @@ contract CyberMaven is IERC165, IERC1271, IERC6551Account {
                 revert(add(result, 32), mload(result))
             }
         }
+        _nounce++;
     }
 
     function token()
         external
         view
-        returns (uint256 chainId, address tokenContract, uint256 tokenId)
+        returns (
+            uint256 chainId,
+            address tokenContract,
+            uint256 tokenId
+        )
     {
         uint256 length = address(this).code.length;
         return
@@ -60,10 +64,11 @@ contract CyberMaven is IERC165, IERC1271, IERC6551Account {
             interfaceId == type(IERC6551Account).interfaceId);
     }
 
-    function isValidSignature(
-        bytes32 hash,
-        bytes memory signature
-    ) external view returns (bytes4 magicValue) {
+    function isValidSignature(bytes32 hash, bytes memory signature)
+        external
+        view
+        returns (bytes4 magicValue)
+    {
         bool isValid = SignatureChecker.isValidSignatureNow(
             owner(),
             hash,
@@ -76,4 +81,8 @@ contract CyberMaven is IERC165, IERC1271, IERC6551Account {
 
         return "";
     }
+
+     function nonce() external view returns (uint256){
+        return _nounce;
+     }
 }
